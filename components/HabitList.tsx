@@ -6,9 +6,11 @@ export default function HabitList() {
         title: 'test'
     }]
     return (
-        <div>
+        <div className="flex flex-col gap-3">
             {habitArray.map((habit) => (
-                <div key={habit.id}>
+                <div
+                    className="p-4 bg-gray-900 text-gray-100 rounded-lg border border-gray-800 shadow-sm"
+                    key={habit.id}>
                     {habit.title}
                 </div>
             ))}
