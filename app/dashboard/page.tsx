@@ -1,5 +1,6 @@
 import { auth } from "../auth"
 import { signInWithGoogle, signOutBtn } from "@/actions";
+import HabitList from "@/components/HabitList";
 
 export default async function Dashboard() {
     const session = await auth()
@@ -29,6 +30,7 @@ export default async function Dashboard() {
                     </form>}
                 </>
             )}
+            <HabitList />
         </div>
     )
 }
