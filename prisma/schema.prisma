@@ -58,4 +58,11 @@ model Habit {
   id            String    @id @default(cuid())
   name String
   user User @relation(fields: [userId], references: [id], onDelete: Cascade )
+  logs HabitLog[]
+}
+model HabitLog {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  habitId   String
+  habit     Habit    @relation(fields: [habitId], references: [id], onDelete: Cascade)
 }
