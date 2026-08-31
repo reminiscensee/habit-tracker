@@ -18,8 +18,30 @@ export async function createHabit(formData: FormData) {
 
   await prisma.habit.create({
     data: {
-      name: name, 
+      name: name,
       userId: session.user.id,
+    },
+  })
+  revalidatePath('/dashboard');
+}
+export async function markHabitDone(formData: FormData) {
+  const session = await auth();
+  if (!session?.user?.id) return;
+
+  const habitId = formData.get('habitId')?.toString();
+  if (!habitId) return;
+
+  const existingHabit = await prisma.habit.findFirst({
+    where: {
+      id: habitId,
+      userId: session.user.id,
+    },
+  })
+  if (!existingHabit) return;
+
+  await prisma.habitLog.create({
+    data: {
+      habitId,
     },
   })
   revalidatePath('/dashboard');
