@@ -1,9 +1,15 @@
 import { auth } from "../auth"
 import { signInWithGoogle, signOutBtn } from "@/actions";
 import HabitList from "@/components/HabitList";
+import { prisma, } from "@/lib/prisma";
 
 export default async function Dashboard() {
     const session = await auth()
+    const habits = await prisma.habit.findMany({
+        where: {
+            userId: session?.user?.id
+        }
+    })
     return (
         <div className="max-w-2xl mx-auto p-6 flex flex-col gap-8 mt-10">
             {session?.user ? (
@@ -30,7 +36,7 @@ export default async function Dashboard() {
                     </form>}
                 </>
             )}
-            <HabitList />
+            <HabitList habits={habits}/>
         </div>
     )
 }
