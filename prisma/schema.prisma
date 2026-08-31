@@ -19,6 +19,7 @@ model User {
   image         String?
   accounts      Account[]
   sessions      Session[]
+  habits Habit[]
 }
 
 model Account {
@@ -51,4 +52,10 @@ model VerificationToken {
   token      String
   expires    DateTime
   @@unique([identifier, token])
+}
+model Habit {
+  userId String
+  id            String    @id @default(cuid())
+  name String
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade )
 }
