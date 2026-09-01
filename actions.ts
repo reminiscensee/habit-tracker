@@ -36,13 +36,25 @@ export async function markHabitDone(formData: FormData) {
       id: habitId,
       userId: session.user.id,
     },
-  })
+  });
   if (!existingHabit) return;
 
+  
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const todayLog = await prisma.habitLog.findFirst({
+    where: {
+      habitId,
+      createdAt: {
+        gte: today
+      },
+    },
+  });
+  if (todayLog) return;
   await prisma.habitLog.create({
     data: {
       habitId,
     },
-  })
+  });
   revalidatePath('/dashboard');
 }
