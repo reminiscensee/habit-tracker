@@ -1,6 +1,6 @@
 import { Prisma } from "@prisma/client"
 import { markHabitDone } from "@/actions"
-import { calculateCurrentStreak } from "@/lib/streaks"
+import { calculateCurrentStreak, calculateLongestStreak } from "@/lib/streaks"
 
 type HabitWithLogs = Prisma.HabitGetPayload<{
     include: { logs: true }
@@ -16,6 +16,9 @@ export default function HabitList({ habits }: { habits: HabitWithLogs[] }) {
                 >
                     <span className="font-medium">
                         {habit.name} 🔥 {calculateCurrentStreak(habit.logs)}
+                    </span>
+                    <span>
+                        {calculateLongestStreak(habit.logs)} 🔥
                     </span>
 
                     <form action={markHabitDone}>

@@ -29,3 +29,24 @@ export function calculateCurrentStreak(logs: { createdAt: Date }[]) {
 
     return currentStreak; 
 }
+export function calculateLongestStreak(logs: { createdAt: Date }[]) {
+    if (!logs || logs.length === 0) return 0;
+
+    let currentStreak = 1
+    let maxStreak = 1
+
+    for(let i = 1; i < logs.length; i++) {
+        const streak = new Date(logs[i].createdAt);
+        streak.setHours(0, 0, 0, 0);
+        const previousStreak = new Date(logs[i - 1].createdAt);
+        previousStreak.setHours(0, 0, 0, 0);
+
+        if(previousStreak.getTime() - streak.getTime() === 86400000) {
+            currentStreak++
+            maxStreak = Math.max(maxStreak, currentStreak);
+        } else {
+            currentStreak = 1;
+        }
+    }
+    return maxStreak;
+}
