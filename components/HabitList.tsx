@@ -6,7 +6,8 @@ type HabitWithLogs = Prisma.HabitGetPayload<{
     include: { logs: true }
 }>
 
-export default function HabitList({ habits }: { habits: HabitWithLogs[] }) {
+
+export default function HabitList({ habits, isDemo }: { habits: HabitWithLogs[], isDemo: boolean }) {
     return (
         <div className="flex flex-col gap-3">
             {habits.map((habit) => (
@@ -27,12 +28,19 @@ export default function HabitList({ habits }: { habits: HabitWithLogs[] }) {
                             name="habitId"
                             value={habit.id}
                         />
-                        <button
-                            type="submit"
-                            className="px-4 py-1.5 bg-white text-black text-sm font-medium rounded-md hover:bg-gray-200 transition-colors"
-                        >
-                            Done
-                        </button>
+                        {isDemo ? (
+                            <span className="text-xs text-gray-400 bg-gray-800 px-2.5 py-1 rounded border border-gray-700">
+                                Demo Mode
+                            </span>
+                        ) : (
+                            <button
+                                type="submit"
+                                className="px-4 py-1.5 bg-white text-black text-sm font-medium rounded-md hover:bg-gray-200 transition-colors"
+                            >
+                                Done
+                            </button>
+                        )}
+
                     </form>
                 </div>
             ))}
