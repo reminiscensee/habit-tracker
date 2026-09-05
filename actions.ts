@@ -78,3 +78,31 @@ export async function deleteHabit(formData:FormData) {
   })
   revalidatePath('/dashboard');
 }
+export async function updateHabit(formData:FormData) {
+  const session = await auth();
+  if (!session?.user?.id) return;
+
+  const habitId = formData.get('habitId')?.toString();
+  if(!habitId) return;
+
+  const newName = formData.get('name')?.toString();
+  if (!newName) return;
+
+  const selectedHabit = await prisma.habit.findFirst({
+    where: {
+      id: habitId,
+      userId: session.user.id,
+    },
+  });
+  if(!selectedHabit) return;
+
+  await prisma.habit.update({
+    where: {
+      id: habitId,
+    },
+    data: {
+      name: newName,
+    },
+  });
+  revalidatePath('/dashboard');
+}
