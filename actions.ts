@@ -8,24 +8,28 @@ import { habitNameSchema } from './lib/validations'
 export async function signInWithGoogle() {
   await signIn('google')
 }
+
 export async function signOutBtn() {
   await signOut()
 }
+
 export async function createHabit(formData: FormData) {
   const session = await auth();
   if (!session?.user?.id) return;
 
-  const name = formData.get('input')?.toString();
-  if (!name || !name.trim()) return;
+  const name = formData.get('input');
+  const parsed = habitNameSchema.safeParse(name);
+  if (!parsed.success) return;
 
   await prisma.habit.create({
     data: {
-      name: name,
+      name: parsed.data,
       userId: session.user.id,
     },
   })
   revalidatePath('/dashboard');
 }
+
 export async function markHabitDone(formData: FormData) {
   const session = await auth();
   if (!session?.user?.id) return;
@@ -60,6 +64,7 @@ export async function markHabitDone(formData: FormData) {
   });
   revalidatePath('/dashboard');
 }
+
 export async function deleteHabit(formData: FormData) {
   const session = await auth();
   if (!session?.user?.id) return;
@@ -80,6 +85,7 @@ export async function deleteHabit(formData: FormData) {
   })
   revalidatePath('/dashboard');
 }
+
 export async function updateHabit(formData: FormData) {
   const session = await auth();
   if (!session?.user?.id) return;
