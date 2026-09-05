@@ -2,6 +2,8 @@
 import { signIn, signOut, auth } from '@/app/auth'
 import { prisma } from './lib/prisma'
 import { revalidatePath } from 'next/cache'
+import { habitNameSchema } from './lib/validations'
+
 
 export async function signInWithGoogle() {
   await signIn('google')
@@ -39,7 +41,7 @@ export async function markHabitDone(formData: FormData) {
   });
   if (!existingHabit) return;
 
-  
+
   const today = new Date();
   today.setHours(0, 0, 0, 0);
   const todayLog = await prisma.habitLog.findFirst({
@@ -58,19 +60,19 @@ export async function markHabitDone(formData: FormData) {
   });
   revalidatePath('/dashboard');
 }
-export async function deleteHabit(formData:FormData) {
+export async function deleteHabit(formData: FormData) {
   const session = await auth();
   if (!session?.user?.id) return;
 
   const habitId = formData.get('habitId')?.toString();
-  if(!habitId) return;
+  if (!habitId) return;
   const selectedHabit = await prisma.habit.findFirst({
     where: {
       id: habitId,
       userId: session.user.id
     },
   });
-  if(!selectedHabit) return;
+  if (!selectedHabit) return;
   await prisma.habit.delete({
     where: {
       id: habitId
@@ -78,15 +80,17 @@ export async function deleteHabit(formData:FormData) {
   })
   revalidatePath('/dashboard');
 }
-export async function updateHabit(formData:FormData) {
+export async function updateHabit(formData: FormData) {
   const session = await auth();
   if (!session?.user?.id) return;
 
   const habitId = formData.get('habitId')?.toString();
-  if(!habitId) return;
+  if (!habitId) return;
 
-  const newName = formData.get('name')?.toString();
-  if (!newName) return;
+  const rawName = formData.get('name');
+  const parsed = habitNameSchema.safeParse(rawName);
+
+  if (!parsed.success) return;
 
   const selectedHabit = await prisma.habit.findFirst({
     where: {
@@ -94,14 +98,14 @@ export async function updateHabit(formData:FormData) {
       userId: session.user.id,
     },
   });
-  if(!selectedHabit) return;
+  if (!selectedHabit) return;
 
   await prisma.habit.update({
     where: {
       id: habitId,
     },
     data: {
-      name: newName,
+      name: parsed.data,
     },
   });
   revalidatePath('/dashboard');
