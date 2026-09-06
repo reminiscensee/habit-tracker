@@ -1,6 +1,7 @@
 import { Prisma } from "@prisma/client"
 import { markHabitDone, deleteHabit, updateHabit } from "@/actions"
 import { calculateCurrentStreak, calculateLongestStreak } from "@/lib/streaks"
+import { heatmap } from "@/lib/heatmap"
 
 type HabitWithLogs = Prisma.HabitGetPayload<{
     include: { logs: true }
@@ -10,8 +11,9 @@ export default function HabitList({ habits, isDemo }: { habits: HabitWithLogs[],
     return (
         <div className="flex flex-col gap-3">
             {habits.map((habit) => {
-                const currentStreak = calculateCurrentStreak(habit.logs)
-                const longestStreak = calculateLongestStreak(habit.logs)
+                const currentStreak = calculateCurrentStreak(habit.logs);
+                const longestStreak = calculateLongestStreak(habit.logs);
+                const heatmapData = heatmap(habit.logs);
 
                 return (
                     <div
@@ -80,6 +82,7 @@ export default function HabitList({ habits, isDemo }: { habits: HabitWithLogs[],
                                     Delete
                                 </button>
                             </form>
+                            <pre className="text-xs">{JSON.stringify(heatmapData, null, 2)}</pre>
                         </div>
                     </div>
                 )
