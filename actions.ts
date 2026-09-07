@@ -27,7 +27,7 @@ export async function createHabit(formData: FormData) {
       userId: session.user.id,
     },
   })
-  revalidatePath('/dashboard');
+  revalidatePath('/');
 }
 
 export async function markHabitDone(formData: FormData) {
@@ -62,7 +62,7 @@ export async function markHabitDone(formData: FormData) {
       habitId,
     },
   });
-  revalidatePath('/dashboard');
+  revalidatePath('/');
 }
 
 export async function deleteHabit(formData: FormData) {
@@ -83,7 +83,7 @@ export async function deleteHabit(formData: FormData) {
       id: habitId
     }
   })
-  revalidatePath('/dashboard');
+  revalidatePath('/');
 }
 
 export async function updateHabit(formData: FormData) {
@@ -114,5 +114,5 @@ export async function updateHabit(formData: FormData) {
       name: parsed.data,
     },
   });
-  revalidatePath('/dashboard');
+  revalidatePath('/');
 }
