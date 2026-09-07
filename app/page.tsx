@@ -28,7 +28,16 @@ export default async function Home() {
     <div className="max-w-2xl mx-auto p-6 flex flex-col gap-8 mt-10">
       {session?.user ? (
         <div className="flex items-center justify-between">
-          <p>Hello, {session.user.name}</p>
+          <p>Hello,  {session.user.name}</p>
+          {session.user.image && (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={session.user.image}
+              alt={session.user.name || "User avatar"}
+              referrerPolicy="no-referrer"
+              className="w-15 h-15 rounded-full object-cover border border-gray-800"
+            />
+          )}
           <form action={signOutBtn}>
             <button
               type="submit"
