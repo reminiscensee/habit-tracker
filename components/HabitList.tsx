@@ -2,6 +2,7 @@ import { Prisma } from "@prisma/client"
 import { markHabitDone, deleteHabit, updateHabit } from "@/actions"
 import { calculateCurrentStreak, calculateLongestStreak } from "@/lib/streaks"
 import { heatmap } from "@/lib/heatmap"
+import { SubmitButton } from "./SubmitButton"
 
 type HabitWithLogs = Prisma.HabitGetPayload<{
     include: { logs: true }
@@ -30,13 +31,12 @@ export default function HabitList({ habits, isDemo }: { habits: HabitWithLogs[],
                                     disabled={isDemo}
                                     className="w-full bg-gray-800/80 text-white px-3 py-1.5 rounded-lg border border-gray-700/80 text-sm focus:outline-none focus:border-gray-500 disabled:opacity-50 transition-colors"
                                 />
-                                <button
-                                    type="submit"
+                                <SubmitButton
                                     disabled={isDemo}
                                     className="px-2.5 py-1.5 text-xs bg-gray-800 text-gray-300 hover:text-white border border-gray-700 rounded-lg hover:bg-gray-700 disabled:opacity-40 transition-all shrink-0"
                                 >
                                     Save
-                                </button>
+                                </SubmitButton>
                             </form>
 
                             <div className="flex items-center gap-3 shrink-0">
@@ -65,24 +65,22 @@ export default function HabitList({ habits, isDemo }: { habits: HabitWithLogs[],
                                                 Demo Mode
                                             </span>
                                         ) : (
-                                            <button
-                                                type="submit"
+                                            <SubmitButton
                                                 className="px-3.5 py-1.5 bg-white text-black text-xs font-semibold rounded-lg hover:bg-gray-200 transition-colors"
                                             >
                                                 Done
-                                            </button>
+                                            </SubmitButton>
                                         )}
                                     </form>
 
                                     <form action={deleteHabit}>
                                         <input type="hidden" name="habitId" value={habit.id} />
-                                        <button
-                                            type="submit"
+                                        <SubmitButton
                                             disabled={isDemo}
                                             className="px-3 py-1.5 text-xs font-medium text-red-400 border border-red-500/50 rounded-lg hover:bg-red-600 hover:text-white hover:border-red-600 disabled:opacity-40 disabled:hover:bg-transparent disabled:hover:text-red-400 transition-all duration-150"
                                         >
                                             Delete
-                                        </button>
+                                        </SubmitButton>
                                     </form>
                                 </div>
                             </div>
