@@ -4,7 +4,6 @@ import { prisma } from './lib/prisma'
 import { revalidatePath } from 'next/cache'
 import { habitNameSchema } from './lib/validations'
 
-
 export async function signInWithGoogle() {
   await signIn('google')
 }
@@ -13,21 +12,30 @@ export async function signOutBtn() {
   await signOut()
 }
 
-export async function createHabit(formData: FormData) {
+export async function createHabit(
+  prevState: { error: string | null }, 
+  formData: FormData
+) {
   const session = await auth();
-  if (!session?.user?.id) return;
+  if (!session?.user?.id) {
+    return { error: "Unauthorized" };
+  }
 
   const name = formData.get('input');
   const parsed = habitNameSchema.safeParse(name);
-  if (!parsed.success) return;
+  if (!parsed.success) {
+    return { error: "Invalid habit name" }; 
+  }
 
   await prisma.habit.create({
     data: {
       name: parsed.data,
       userId: session.user.id,
     },
-  })
+  });
+
   revalidatePath('/');
+  return { error: null }; 
 }
 
 export async function markHabitDone(formData: FormData) {
