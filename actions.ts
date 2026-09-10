@@ -3,6 +3,7 @@ import { signIn, signOut, auth } from '@/app/auth'
 import { prisma } from './lib/prisma'
 import { revalidatePath } from 'next/cache'
 import { habitNameSchema } from './lib/validations'
+import { error } from 'console'
 
 export async function signInWithGoogle() {
   await signIn('google')
@@ -94,17 +95,26 @@ export async function deleteHabit(formData: FormData) {
   revalidatePath('/');
 }
 
-export async function updateHabit(formData: FormData) {
+export async function updateHabit(
+  prevState: { error: string | null }, 
+  formData: FormData
+) {
   const session = await auth();
-  if (!session?.user?.id) return;
+  if (!session?.user?.id) {
+    return { error: "Unauthorized" };
+  }
 
   const habitId = formData.get('habitId')?.toString();
-  if (!habitId) return;
+  if (!habitId) {
+  return { error: "Habit ID is missing" };
+}
 
   const rawName = formData.get('name');
   const parsed = habitNameSchema.safeParse(rawName);
 
-  if (!parsed.success) return;
+  if (!parsed.success) {
+    return { error: "Invalid habit name" }; 
+  }
 
   const selectedHabit = await prisma.habit.findFirst({
     where: {
@@ -112,7 +122,9 @@ export async function updateHabit(formData: FormData) {
       userId: session.user.id,
     },
   });
-  if (!selectedHabit) return;
+  if (!selectedHabit)  {
+    return { error: "Habit not found" }
+  }
 
   await prisma.habit.update({
     where: {
@@ -123,4 +135,5 @@ export async function updateHabit(formData: FormData) {
     },
   });
   revalidatePath('/');
+  return { error: null };
 }
