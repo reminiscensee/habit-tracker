@@ -3,7 +3,6 @@ import { signIn, signOut, auth } from '@/app/auth'
 import { prisma } from './lib/prisma'
 import { revalidatePath } from 'next/cache'
 import { habitNameSchema } from './lib/validations'
-import { error } from 'console'
 
 export async function signInWithGoogle() {
   await signIn('google')

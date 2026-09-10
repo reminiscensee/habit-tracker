@@ -1,8 +1,9 @@
 import { Prisma } from "@prisma/client"
-import { markHabitDone, deleteHabit, updateHabit } from "@/actions"
+import { markHabitDone, deleteHabit } from "@/actions"
 import { calculateCurrentStreak, calculateLongestStreak } from "@/lib/streaks"
 import { heatmap } from "@/lib/heatmap"
 import { SubmitButton } from "./SubmitButton"
+import { UpdateHabitForm } from "./UpdateHabitForm"
 
 type HabitWithLogs = Prisma.HabitGetPayload<{
     include: { logs: true }
@@ -22,22 +23,7 @@ export default function HabitList({ habits, isDemo }: { habits: HabitWithLogs[],
                         key={habit.id}
                     >
                         <div className="flex items-center justify-between gap-4">
-                            <form action={updateHabit} className="flex items-center gap-2 flex-1 max-w-xs">
-                                <input type="hidden" name="habitId" value={habit.id} />
-                                <input
-                                    type="text"
-                                    name="name"
-                                    defaultValue={habit.name}
-                                    disabled={isDemo}
-                                    className="w-full bg-gray-800/80 text-white px-3 py-1.5 rounded-lg border border-gray-700/80 text-sm focus:outline-none focus:border-gray-500 disabled:opacity-50 transition-colors"
-                                />
-                                <SubmitButton
-                                    disabled={isDemo}
-                                    className="px-2.5 py-1.5 text-xs bg-gray-800 text-gray-300 hover:text-white border border-gray-700 rounded-lg hover:bg-gray-700 disabled:opacity-40 transition-all shrink-0"
-                                >
-                                    Save
-                                </SubmitButton>
-                            </form>
+                            <UpdateHabitForm isDemo={isDemo} habitId={habit.id} initialName={habit.name}/>
 
                             <div className="flex items-center gap-3 shrink-0">
                                 <div className="flex items-center gap-2 text-xs">
