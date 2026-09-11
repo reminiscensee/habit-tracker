@@ -13,7 +13,7 @@ export async function signOutBtn() {
 }
 
 export async function createHabit(
-  prevState: { error: string | null }, 
+  prevState: { error: string | null },
   formData: FormData
 ) {
   const session = await auth();
@@ -24,18 +24,23 @@ export async function createHabit(
   const name = formData.get('input');
   const parsed = habitNameSchema.safeParse(name);
   if (!parsed.success) {
-    return { error: "Invalid habit name" }; 
+    return { error: "Invalid habit name" };
   }
 
-  await prisma.habit.create({
-    data: {
-      name: parsed.data,
-      userId: session.user.id,
-    },
-  });
+  try {
+    await prisma.habit.create({
+      data: {
+        name: parsed.data,
+        userId: session.user.id,
+      },
+    });
+  } catch {
+    return { error: "Не вдалося зберегти звичку" }
+  }
+
 
   revalidatePath('/');
-  return { error: null }; 
+  return { error: null };
 }
 
 export async function markHabitDone(formData: FormData) {
@@ -45,31 +50,34 @@ export async function markHabitDone(formData: FormData) {
   const habitId = formData.get('habitId')?.toString();
   if (!habitId) return;
 
-  const existingHabit = await prisma.habit.findFirst({
-    where: {
-      id: habitId,
-      userId: session.user.id,
-    },
-  });
-  if (!existingHabit) return;
-
-
   const today = new Date();
   today.setHours(0, 0, 0, 0);
-  const todayLog = await prisma.habitLog.findFirst({
-    where: {
-      habitId,
-      createdAt: {
-        gte: today
+  try {
+    const existingHabit = await prisma.habit.findFirst({
+      where: {
+        id: habitId,
+        userId: session.user.id,
       },
-    },
-  });
-  if (todayLog) return;
-  await prisma.habitLog.create({
-    data: {
-      habitId,
-    },
-  });
+    });
+    if (!existingHabit) return;
+    const todayLog = await prisma.habitLog.findFirst({
+      where: {
+        habitId,
+        createdAt: {
+          gte: today
+        },
+      },
+    });
+    if (todayLog) return;
+    await prisma.habitLog.create({
+      data: {
+        habitId,
+      },
+    });
+  } catch (e) {
+    console.error(e)
+  }
+
   revalidatePath('/');
 }
 
@@ -79,23 +87,28 @@ export async function deleteHabit(formData: FormData) {
 
   const habitId = formData.get('habitId')?.toString();
   if (!habitId) return;
-  const selectedHabit = await prisma.habit.findFirst({
-    where: {
-      id: habitId,
-      userId: session.user.id
-    },
-  });
-  if (!selectedHabit) return;
-  await prisma.habit.delete({
-    where: {
-      id: habitId
-    }
-  })
+  try {
+    const selectedHabit = await prisma.habit.findFirst({
+      where: {
+        id: habitId,
+        userId: session.user.id
+      },
+    });
+    if (!selectedHabit) return;
+    await prisma.habit.delete({
+      where: {
+        id: habitId
+      }
+    })
+  } catch (e) {
+    console.error(e)
+  }
+
   revalidatePath('/');
 }
 
 export async function updateHabit(
-  prevState: { error: string | null }, 
+  prevState: { error: string | null },
   formData: FormData
 ) {
   const session = await auth();
@@ -105,34 +118,38 @@ export async function updateHabit(
 
   const habitId = formData.get('habitId')?.toString();
   if (!habitId) {
-  return { error: "Habit ID is missing" };
-}
+    return { error: "Habit ID is missing" };
+  }
 
   const rawName = formData.get('name');
   const parsed = habitNameSchema.safeParse(rawName);
 
   if (!parsed.success) {
-    return { error: "Invalid habit name" }; 
+    return { error: "Invalid habit name" };
+  }
+  try {
+    const selectedHabit = await prisma.habit.findFirst({
+      where: {
+        id: habitId,
+        userId: session.user.id,
+      },
+    });
+    if (!selectedHabit) {
+      return { error: "Habit not found" }
+    }
+
+    await prisma.habit.update({
+      where: {
+        id: habitId,
+      },
+      data: {
+        name: parsed.data,
+      },
+    });
+  } catch {
+    return { error: "Не вдалося зберегти звичку" }
   }
 
-  const selectedHabit = await prisma.habit.findFirst({
-    where: {
-      id: habitId,
-      userId: session.user.id,
-    },
-  });
-  if (!selectedHabit)  {
-    return { error: "Habit not found" }
-  }
-
-  await prisma.habit.update({
-    where: {
-      id: habitId,
-    },
-    data: {
-      name: parsed.data,
-    },
-  });
   revalidatePath('/');
   return { error: null };
 }
