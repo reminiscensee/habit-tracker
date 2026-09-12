@@ -5,6 +5,7 @@ import { heatmap } from "@/lib/heatmap"
 import { SubmitButton } from "./SubmitButton"
 import { UpdateHabitForm } from "./UpdateHabitForm"
 
+
 type HabitWithLogs = Prisma.HabitGetPayload<{
     include: { logs: true }
 }>
@@ -72,23 +73,7 @@ export default function HabitList({ habits, isDemo }: { habits: HabitWithLogs[],
                             </div>
                         </div>
 
-                        {/* 3. Heatmap */}
-                        <div className="bg-gray-950/60 p-3 rounded-lg border border-gray-800/50 flex flex-col gap-2 mt-auto">
-                            <div className="flex items-center justify-between text-xs text-gray-400 font-medium px-0.5">
-                                <span>Last 90 days</span>
-                            </div>
-
-                            <div className="flex justify-start items-center overflow-x-auto">
-                                <div className="grid grid-rows-7 grid-flow-col gap-1.5">
-                                    {[...heatmapData].reverse().map((day) => (
-                                        <div key={day.date} className={`w-3 h-3 rounded-sm hover:ring-1 hover:ring-white/50 transition-all cursor-pointer ${
-                                                day.completed ?  "bg-emerald-500" : "bg-zinc-800"
-                                            }`} title={`${new Date(day.date).toLocaleDateString('en-US', { weekday: 'short', day: 'numeric', month: 'short' })} — ${day.completed ? 'Done' : 'Not done'}`}> 
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                        </div>
+                        
                     </div>
                 )
             })}
