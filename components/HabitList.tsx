@@ -11,7 +11,7 @@ type HabitWithLogs = Prisma.HabitGetPayload<{
 
 export default function HabitList({ habits, isDemo }: { habits: HabitWithLogs[], isDemo: boolean }) {
     return (
-        <div className="flex flex-col gap-3">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 w-full">
             {habits.map((habit) => {
                 const currentStreak = calculateCurrentStreak(habit.logs);
                 const longestStreak = calculateLongestStreak(habit.logs);
@@ -19,60 +19,61 @@ export default function HabitList({ habits, isDemo }: { habits: HabitWithLogs[],
 
                 return (
                     <div
-                        className="flex flex-col gap-3 p-4 bg-gray-900 text-gray-100 rounded-xl border border-gray-800 shadow-sm"
+                        className="flex flex-col p-4 bg-gray-900 text-gray-100 rounded-xl border border-gray-800 shadow-sm gap-3 sm:gap-4 overflow-hidden"
                         key={habit.id}
                     >
-                        <div className="flex items-center justify-between gap-4">
+                        <div className="w-full">
                             <UpdateHabitForm isDemo={isDemo} habitId={habit.id} initialName={habit.name}/>
+                        </div>
 
-                            <div className="flex items-center gap-3 shrink-0">
-                                <div className="flex items-center gap-2 text-xs">
-                                    <div
-                                        className="flex items-center gap-1.5 bg-gray-800/60 border border-gray-700/50 px-2.5 py-1.5 rounded-lg"
-                                        title="Current Streak"
-                                    >
-                                        <span className="text-gray-400 font-medium">Cur:</span>
-                                        <span className="font-semibold text-orange-400">🔥 {currentStreak}</span>
-                                    </div>
-                                    <div
-                                        className="flex items-center gap-1.5 bg-gray-800/60 border border-gray-700/50 px-2.5 py-1.5 rounded-lg"
-                                        title="Longest Streak"
-                                    >
-                                        <span className="text-gray-400 font-medium">Best:</span>
-                                        <span className="font-semibold text-yellow-400">🏆 {longestStreak}</span>
-                                    </div>
+                        <div className="flex items-center justify-between gap-2 flex-wrap">
+                            <div className="flex items-center gap-2 text-xs">
+                                <div
+                                    className="flex items-center gap-1.5 bg-gray-800/60 border border-gray-700/50 px-2.5 py-1.5 rounded-lg"
+                                    title="Current Streak"
+                                >
+                                    <span className="text-gray-400 font-medium">Cur:</span>
+                                    <span className="font-semibold text-orange-400">🔥 {currentStreak}</span>
                                 </div>
+                                <div
+                                    className="flex items-center gap-1.5 bg-gray-800/60 border border-gray-700/50 px-2.5 py-1.5 rounded-lg"
+                                    title="Longest Streak"
+                                >
+                                    <span className="text-gray-400 font-medium">Best:</span>
+                                    <span className="font-semibold text-yellow-400">🏆 {longestStreak}</span>
+                                </div>
+                            </div>
 
-                                <div className="flex items-center gap-2">
-                                    <form action={markHabitDone}>
-                                        <input type="hidden" name="habitId" value={habit.id} />
-                                        {isDemo ? (
-                                            <span className="text-xs text-gray-400 bg-gray-800 px-3 py-1.5 rounded-lg border border-gray-700 block font-medium">
-                                                Demo Mode
-                                            </span>
-                                        ) : (
-                                            <SubmitButton
-                                                className="px-3.5 py-1.5 bg-white text-black text-xs font-semibold rounded-lg hover:bg-gray-200 transition-colors"
-                                            >
-                                                Done
-                                            </SubmitButton>
-                                        )}
-                                    </form>
-
-                                    <form action={deleteHabit}>
-                                        <input type="hidden" name="habitId" value={habit.id} />
+                            <div className="flex items-center gap-2">
+                                <form action={markHabitDone}>
+                                    <input type="hidden" name="habitId" value={habit.id} />
+                                    {isDemo ? (
+                                        <span className="text-xs text-gray-400 bg-gray-800 px-3 py-1.5 rounded-lg border border-gray-700 block font-medium">
+                                            Demo Mode
+                                        </span>
+                                    ) : (
                                         <SubmitButton
-                                            disabled={isDemo}
-                                            className="px-3 py-1.5 text-xs font-medium text-red-400 border border-red-500/50 rounded-lg hover:bg-red-600 hover:text-white hover:border-red-600 disabled:opacity-40 disabled:hover:bg-transparent disabled:hover:text-red-400 transition-all duration-150"
+                                            className="px-3.5 py-1.5 bg-white text-black text-xs font-semibold rounded-lg hover:bg-gray-200 transition-colors"
                                         >
-                                            Delete
+                                            Done
                                         </SubmitButton>
-                                    </form>
-                                </div>
+                                    )}
+                                </form>
+
+                                <form action={deleteHabit}>
+                                    <input type="hidden" name="habitId" value={habit.id} />
+                                    <SubmitButton
+                                        disabled={isDemo}
+                                        className="px-3 py-1.5 text-xs font-medium text-red-400 border border-red-500/50 rounded-lg hover:bg-red-600 hover:text-white hover:border-red-600 disabled:opacity-40 disabled:hover:bg-transparent disabled:hover:text-red-400 transition-all duration-150"
+                                    >
+                                        Delete
+                                    </SubmitButton>
+                                </form>
                             </div>
                         </div>
 
-                        <div className="bg-gray-950/60 p-3 rounded-lg border border-gray-800/50 flex flex-col gap-2">
+                        {/* 3. Heatmap */}
+                        <div className="bg-gray-950/60 p-3 rounded-lg border border-gray-800/50 flex flex-col gap-2 mt-auto">
                             <div className="flex items-center justify-between text-xs text-gray-400 font-medium px-0.5">
                                 <span>Last 90 days</span>
                             </div>
