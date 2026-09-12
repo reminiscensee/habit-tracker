@@ -4,7 +4,7 @@ import { calculateCurrentStreak, calculateLongestStreak } from "@/lib/streaks"
 import { heatmap } from "@/lib/heatmap"
 import { SubmitButton } from "./SubmitButton"
 import { UpdateHabitForm } from "./UpdateHabitForm"
-
+import { HabitHeatmap } from "./HabitHeatmap"
 
 type HabitWithLogs = Prisma.HabitGetPayload<{
     include: { logs: true }
@@ -12,7 +12,7 @@ type HabitWithLogs = Prisma.HabitGetPayload<{
 
 export default function HabitList({ habits, isDemo }: { habits: HabitWithLogs[], isDemo: boolean }) {
     return (
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 w-full">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 w-full items-start">
             {habits.map((habit) => {
                 const currentStreak = calculateCurrentStreak(habit.logs);
                 const longestStreak = calculateLongestStreak(habit.logs);
@@ -20,7 +20,7 @@ export default function HabitList({ habits, isDemo }: { habits: HabitWithLogs[],
 
                 return (
                     <div
-                        className="flex flex-col p-4 bg-gray-900 text-gray-100 rounded-xl border border-gray-800 shadow-sm gap-3 sm:gap-4 overflow-hidden"
+                        className="flex flex-col p-4 bg-gray-900 text-gray-100 rounded-xl border border-gray-800 shadow-sm gap-3 sm:gap-4 overflow-hidden h-fit"
                         key={habit.id}
                     >
                         <div className="w-full">
@@ -73,7 +73,7 @@ export default function HabitList({ habits, isDemo }: { habits: HabitWithLogs[],
                             </div>
                         </div>
 
-                        
+                        <HabitHeatmap heatmapData={heatmapData} />
                     </div>
                 )
             })}
