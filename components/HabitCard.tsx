@@ -23,6 +23,15 @@ export default function HabitCard({ habit, isDemo }: { habit: HabitWithLogs; isD
     const longestStreak = calculateLongestStreak(optimisticLogs);
     const heatmapData = heatmap(optimisticLogs)
 
+    async function handleDone(formData: FormData) {
+        addOptimisticLog({
+            id: Math.random().toString(),
+            habitId: habit.id,
+            createdAt: new Date()
+        })
+        await markHabitDone(formData)
+    }
+   
 
     return (
         <div className="flex flex-col p-4 bg-gray-900 text-gray-100 rounded-xl border border-gray-800 shadow-sm gap-3 sm:gap-4 overflow-hidden h-fit">
@@ -49,7 +58,7 @@ export default function HabitCard({ habit, isDemo }: { habit: HabitWithLogs; isD
                 </div>
 
                 <div className="flex items-center gap-2">
-                    <form action={markHabitDone}>
+                    <form action={handleDone}>
                         <input type="hidden" name="habitId" value={habit.id} />
                         {isDemo ? (
                             <span className="text-xs text-gray-400 bg-gray-800 px-3 py-1.5 rounded-lg border border-gray-700 block font-medium">
