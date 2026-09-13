@@ -1,3 +1,5 @@
+'use client'
+
 import { Prisma } from "@prisma/client"
 import { markHabitDone, deleteHabit } from "@/actions"
 import { calculateCurrentStreak, calculateLongestStreak } from "@/lib/streaks"
@@ -5,15 +7,22 @@ import { heatmap } from "@/lib/heatmap"
 import { SubmitButton } from "./SubmitButton"
 import { UpdateHabitForm } from "./UpdateHabitForm"
 import { HabitHeatmap } from "./HabitHeatmap"
+import { useOptimistic } from "react"
 
 type HabitWithLogs = Prisma.HabitGetPayload<{
     include: { logs: true }
 }>
+type HabitLog = HabitWithLogs["logs"][number]
 
-export default function HabitCard({ habit, isDemo }: { habit: HabitWithLogs; isDemo: boolean }) {
-    const currentStreak = calculateCurrentStreak(habit.logs)
-    const longestStreak = calculateLongestStreak(habit.logs)
-    const heatmapData = heatmap(habit.logs)
+export default function HabitCard({ habit, isDemo }: { habit: HabitWithLogs; isDemo: boolean }) {  
+    const [optimisticLogs, addOptimisticLog] = useOptimistic(
+        habit.logs,
+        (currentLogs, newLog: HabitLog) => [...currentLogs, newLog]
+    );
+    const currentStreak = calculateCurrentStreak(optimisticLogs);
+    const longestStreak = calculateLongestStreak(optimisticLogs);
+    const heatmapData = heatmap(optimisticLogs)
+
 
     return (
         <div className="flex flex-col p-4 bg-gray-900 text-gray-100 rounded-xl border border-gray-800 shadow-sm gap-3 sm:gap-4 overflow-hidden h-fit">
