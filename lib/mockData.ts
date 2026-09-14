@@ -49,7 +49,7 @@ export const mockHabits: HabitWithLogs[] = [
   {
     id: "demo-habit-5",
     userId: "demo-user",
-    name: "Workout / Boxing Session 🥊",
+    name: "Workout",
     logs: [
       0, 2, 4, 7, 9, 11, 14, 16, 18, 21, 23, 25, 28, 30, 33, 35, 38, 42, 45, 49, 52
     ].map((days, idx) => createLog(`demo-log-5-${idx}`, "demo-habit-5", days)),
