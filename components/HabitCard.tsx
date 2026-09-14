@@ -14,7 +14,7 @@ type HabitWithLogs = Prisma.HabitGetPayload<{
 }>
 type HabitLog = HabitWithLogs["logs"][number]
 
-export default function HabitCard({ habit, isDemo }: { habit: HabitWithLogs; isDemo: boolean }) {  
+export default function HabitCard({ habit, isDemo }: { habit: HabitWithLogs; isDemo: boolean }) {
     const [optimisticLogs, addOptimisticLog] = useOptimistic(
         habit.logs,
         (currentLogs, newLog: HabitLog) => [...currentLogs, newLog]
@@ -29,9 +29,14 @@ export default function HabitCard({ habit, isDemo }: { habit: HabitWithLogs; isD
             habitId: habit.id,
             createdAt: new Date()
         })
-        await markHabitDone(formData)
+
+        try {
+            await markHabitDone(formData)
+        } catch (e) {
+            console.error("Failed to mark habit:", e)
+        }
     }
-   
+
 
     return (
         <div className="flex flex-col p-4 bg-gray-900 text-gray-100 rounded-xl border border-gray-800 shadow-sm gap-3 sm:gap-4 overflow-hidden h-fit">
