@@ -1,36 +1,77 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 📝 Habit Tracker
 
-## Getting Started
+A full-stack, production-ready habit tracking application built with Next.js 16 App Router, Prisma v7, Neon PostgreSQL, and Auth.js v5.
 
-First, run the development server:
+## 🚀 Live Demo
+[View Live Demo](https://habit-tracker-delta-sand.vercel.app/)
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## 📸 Screenshots
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Demo Mode View
+![Demo Mode](./demo-mode.png)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Authenticated View
+![Authenticated View](./authenticated-view.png)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### Mobile View
+![Mobile View](./mobile-view.png)
 
-## Learn More
+## ✨ Features
+- **Instant Demo Mode:** Architectural fallback that allows guests to test full interactive functionality with isolated mock data without requiring sign-in.
+- **Secure Google OAuth 2.0:** Seamless user authentication powered by Auth.js v5 with isolated persistent data per user.
+- **Habit Management & Logging:** Create, track, and log daily habit completions with real-time state updates.
+- **Responsive Layout:** Optimized interface for mobile and desktop screens built with Tailwind CSS.
+- **Production-Graded Reliability:** Complete error boundary protection on Server Actions to ensure smooth UX.
 
-To learn more about Next.js, take a look at the following resources:
+## 🛠️ Tech Stack
+- **Framework:** Next.js 16 (App Router, Server Components & Server Actions)
+- **Language:** TypeScript
+- **Database & ORM:** PostgreSQL (Neon Serverless), Prisma v7
+- **Authentication:** Auth.js v5 (Google OAuth)
+- **Styling:** Tailwind CSS
+- **Deployment:** Vercel
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 🧠 Technical Highlights
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- **Dual-State Architecture (Demo vs. Auth):** Built a zero-friction demo mode. Unauthenticated visitors use client-side mock habits, avoiding unnecessary database hits. Authenticated users seamlessly query PostgreSQL with strict session filters (`session.user.id`).
+- **Resilient Server Actions:** Wrapped database mutations and server actions in robust error boundaries with try-catch logic, preventing application crashes and providing clean user feedback.
+- **Optimized Data Aggregation:** Applied O(1) Hash Map lookups for fast client-side habit history calculation and date comparisons, ensuring fluid UI performance.
 
-## Deploy on Vercel
+## ⚙️ Running Locally
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+To run this project on your local machine, follow these steps:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1. Clone the repository:
+
+   ```bash
+   git clone https://github.com/reminiscensee/habit-tracker.git
+   ```
+2. Navigate to the project folder:
+
+   ```bash
+   cd habit-tracker
+   ```
+3. Install dependencies:
+
+   ```bash
+   pnpm install
+   ```
+4. Set up environment variables in a .env file:
+
+   ```bash
+   DATABASE_URL="your-neon-postgres-url"
+   AUTH_SECRET="your-auth-secret"
+   GOOGLE_CLIENT_ID="your-google-client-id"
+   GOOGLE_CLIENT_SECRET="your-google-client-secret"
+   ```
+5. Push Prisma schema and generate client:
+
+   ```bash
+   npx prisma db push
+   npx prisma generate
+   ```
+6. Start the development server:
+
+   ```bash
+   pnpm dev
+   ```
